@@ -1,0 +1,2 @@
+###Get all contacts
+GET http://localhost:8000/EXAMPLE
