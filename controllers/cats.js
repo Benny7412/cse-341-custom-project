@@ -1,11 +1,14 @@
 const mongodb = require("../routes/data/database");
 const ObjectId = require("mongodb").ObjectId;
 
+const currentDatabase = "CSE341-Project-2"; 
+const currentCollection = "cats";
+
 const getAll = async (req, res) => {
   //#swagger.tags=['Contacts']
   const contacts = await mongodb
     .getDatabase()
-    .db("project1")
+    .db(currentDatabase)
     .collection("contacts")
     .find()
     .toArray();
@@ -18,7 +21,7 @@ const getSingle = async (req, res) => {
   const userId = new ObjectId(req.params.id);
   const contact = await mongodb
     .getDatabase()
-    .db("project1")
+    .db(currentDatabase)
     .collection("contacts")
     .find({ _id: userId });
 
@@ -42,7 +45,7 @@ const createContact = async (req, res) => {
   //acquire database and insert contact
   const response = await mongodb
     .getDatabase()
-    .db("project1")
+    .db(currentDatabase)
     .collection("contacts")
     .insertOne(contact);
   //if contact is created, send success message
@@ -68,7 +71,7 @@ const updateContact = async (req, res) => {
   };
   const response = await mongodb
     .getDatabase()
-    .db("project1")
+    .db(currentDatabase)
     .collection("contacts")
     .replaceOne({ _id: userId }, contact);
   //check if contact is updated
@@ -89,7 +92,7 @@ const deleteContact = async (req, res) => {
   // Get the contact to be deleted
   const contactToDelete = await mongodb
     .getDatabase()
-    .db("project1")
+    .db(currentDatabase)
     .collection("contacts")
     .findOne({ _id: userId });
   if (!contactToDelete) {
@@ -98,7 +101,7 @@ const deleteContact = async (req, res) => {
 
   const response = await mongodb
     .getDatabase()
-    .db("project1")
+    .db(currentDatabase)
     .collection("contacts")
     .deleteOne({ _id: userId });
 
