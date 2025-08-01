@@ -1,2 +1,2 @@
 ###Get all contacts
-GET http://localhost:8000/EXAMPLE
+GET http://localhost:8080/cats/

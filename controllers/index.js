@@ -1,5 +1,5 @@
 const getHome = (req, res) => {
-  res.send("Entered Home.");
+  res.json({ message: "Welcome to the Cats API" });
   console.log("Entered Home.");
 };
 

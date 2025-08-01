@@ -1,18 +1,52 @@
 // app.js
-const express = require("express");
-const path = require("path");
-const bodyParser = require("body-parser");
+const express    = require('express');
+const path       = require('path');
+const bodyParser = require('body-parser');
+
+const dotenv = require("dotenv");
+const mongodb = require("./data/database");
+dotenv.config();
+
+// Import routes
+const indexRoutes = require('./routes/index');
+const catsRoutes = require('./routes/cats');
+const catBreedsRoutes = require('./routes/catBreeds');
+
 
 const app = express();
-const indexRoutes = require("./routes/index");
 
 /* ---------- middleware ---------- */
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public"))); // serve /public
 
+
+/* ---------- swagger docs ---------- */
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./docs/swagger.json');
+const swaggerOptions = {
+  explorer: true,
+  customCss: '.swagger-ui .topbar { display: none }',
+};
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, swaggerOptions));
+
 /* ---------- routes ---------- */
 app.use("/", indexRoutes);
+app.use("/cats", catsRoutes);
+app.use("/catBreeds", catBreedsRoutes);
+
 
 /* ---------- start server ---------- */
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+const port = process.env.PORT || 8080;
+mongodb.initDb()
+  .then((client) => {
+    console.log('Connected to MongoDB');
+    app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+    });
+  })
+  .catch((err) => {
+    console.error("Failed to connect to MongoDB:", err);
+    process.exit(1);
+  });
+
+module.exports = app;

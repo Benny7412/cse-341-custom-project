@@ -104,4 +104,4 @@ async function run() {
   }
 }
 
-run();
+module.exports = { catData, catBreedData, run };

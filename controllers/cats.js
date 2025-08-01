@@ -57,71 +57,60 @@ const createContact = async (req, res) => {
       .status(500)
       .json(response.error || "Error occurred while creating the contact");
   }
-};
+}
 
-const updateContact = async (req, res) => {
-  //#swagger.tags=['Contacts']
-  const userId = new ObjectId(req.params.id);
-  const contact = {
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    email: req.body.email,
-    favoriteColor: req.body.favoriteColor,
-    birthday: req.body.birthday,
-  };
-  const response = await mongodb
-    .getDatabase()
-    .db(currentDatabase)
-    .collection("contacts")
-    .replaceOne({ _id: userId }, contact);
-  //check if contact is updated
-  if (response.modifiedCount > 0) {
+// PUT /cats/:id – update an existing cat
+async function updateCat(req, res) {
+  try {
+    const { id } = req.params;
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ error: 'Invalid cat id' });
+    }
+    const body = req.body;
+    const error = validateCat(body);
+    if (error) {
+      return res.status(400).json({ error });
+    }
+    await initDb();
+    const db = getDb();
+    const result = await db
+      .collection('cats')
+      .updateOne({ _id: new ObjectId(id) }, { $set: body });
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ error: 'Cat not found' });
+    }
+    const updated = await db.collection('cats').findOne({ _id: new ObjectId(id) });
+    res.status(200).json(updated);
+  } catch (err) {
+    console.error('Error updating cat:', err);
+    res.status(500).json({ error: 'An error occurred updating the cat' });
+  }
+}
+
+// DELETE /cats/:id – remove a cat
+async function deleteCat(req, res) {
+  try {
+    const { id } = req.params;
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ error: 'Invalid cat id' });
+    }
+    await initDb();
+    const db = getDb();
+    const result = await db.collection('cats').deleteOne({ _id: new ObjectId(id) });
+    if (result.deletedCount === 0) {
+      return res.status(404).json({ error: 'Cat not found' });
+    }
     res.status(204).send();
-    console.log("Contact updated!");
-  } else {
-    res
-      .status(500)
-      .json(response.error || "Error occurred while updating the contact");
+  } catch (err) {
+    console.error('Error deleting cat:', err);
+    res.status(500).json({ error: 'An error occurred deleting the cat' });
   }
-};
-
-const deleteContact = async (req, res) => {
-  //#swagger.tags=['Contacts']
-  const userId = new ObjectId(req.params.id);
-
-  // Get the contact to be deleted
-  const contactToDelete = await mongodb
-    .getDatabase()
-    .db(currentDatabase)
-    .collection("contacts")
-    .findOne({ _id: userId });
-  if (!contactToDelete) {
-    return res.status(404).json({ message: "Contact not found" });
-  }
-
-  const response = await mongodb
-    .getDatabase()
-    .db(currentDatabase)
-    .collection("contacts")
-    .deleteOne({ _id: userId });
-
-  if (response.deletedCount > 0) {
-    console.log(
-      `${contactToDelete.firstName} ${contactToDelete.lastName} deleted!`
-    );
-    //send success message with contact details
-    res.status(200).json({
-      message: `${contactToDelete.firstName} ${contactToDelete.lastName} deleted!`,
-    });
-  } else {
-    res.status(500).json("Error occurred while deleting the contact");
-  }
-};
+}
 
 module.exports = {
-  getAll,
-  getSingle,
-  createContact,
-  updateContact,
-  deleteContact,
+  getAllCats,
+  getCatById,
+  createCat,
+  updateCat,
+  deleteCat,
 };
