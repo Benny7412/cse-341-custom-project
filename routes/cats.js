@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const catsController = require('../controllers/cats');
+const { validateObjectId, validateCat } = require('../utilities');
 
 // #swagger.tags = ['Cats']
 // Return all cats
@@ -12,18 +13,17 @@ router.get('/', (req, res) => {
 });
 
 // Return single cat
-router.get('/:id', (req, res) => {
-
+router.get('/:id', validateObjectId, (req, res) => {
     return catsController.getCatById(req, res);
 });
 
 // Create new cat
-router.post('/', catsController.createCat);
+router.post('/', validateCat, catsController.createCat);
 
 // Update existing cat
-router.put('/:id', catsController.updateCat);
+router.put('/:id', validateObjectId, validateCat, catsController.updateCat);
 
 // Delete cat
-router.delete('/:id', catsController.deleteCat);
+router.delete('/:id', validateObjectId, catsController.deleteCat);
 
 module.exports = router;

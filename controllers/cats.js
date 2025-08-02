@@ -1,35 +1,6 @@
 const { ObjectId } = require('mongodb');
 const { initDb, getDb } = require('../data/database');
 
-// Simple validation to ensure required fields are present and of the right type
-function validateCat(body) {
-  if (!body || typeof body !== 'object') {
-    return 'Request body is missing or malformed';
-  }
-  const required = [
-    'name',
-    'birthday',
-    'breed',
-    'gender',
-    'isVaccinated',
-    'weight',
-    'imageURL',
-  ];
-  for (const key of required) {
-    if (!(key in body)) {
-      return `Missing required field: ${key}`;
-    }
-  }
-  if (typeof body.name !== 'string' || !body.name.trim()) return 'Name must not be empty';
-  if (typeof body.breed !== 'string' || !body.breed.trim()) return 'Breed must not be empty';
-  if (typeof body.gender !== 'string' || !body.gender.trim()) return 'Gender must not be empty';
-  if (typeof body.isVaccinated !== 'boolean') return 'isVaccinated must be a boolean';
-  if (typeof body.weight !== 'string' && typeof body.weight !== 'number') return 'Weight must be a string or number';
-  if (typeof body.birthday !== 'string' || !body.birthday.trim()) return 'Birthday must not be empty';
-  if (typeof body.imageURL !== 'string' || !body.imageURL.trim()) return 'imageURL must not be empty';
-  return null;
-}
-
 // GET /cats – list all cats
 async function getAllCats(req, res) {
   try {
@@ -47,9 +18,6 @@ async function getAllCats(req, res) {
 async function getCatById(req, res) {
   try {
     const { id } = req.params;
-    if (!ObjectId.isValid(id)) {
-      return res.status(400).json({ error: 'Invalid cat id' });
-    }
     await initDb();
     const db = getDb();
     const cat = await db.collection('cats').findOne({ _id: new ObjectId(id) });
@@ -67,10 +35,6 @@ async function getCatById(req, res) {
 async function createCat(req, res) {
   try {
     const body = req.body;
-    const error = validateCat(body);
-    if (error) {
-      return res.status(400).json({ error });
-    }
     await initDb();
     const db = getDb();
     const result = await db.collection('cats').insertOne(body);
@@ -86,14 +50,7 @@ async function createCat(req, res) {
 async function updateCat(req, res) {
   try {
     const { id } = req.params;
-    if (!ObjectId.isValid(id)) {
-      return res.status(400).json({ error: 'Invalid cat id' });
-    }
     const body = req.body;
-    const error = validateCat(body);
-    if (error) {
-      return res.status(400).json({ error });
-    }
     await initDb();
     const db = getDb();
     const result = await db.collection('cats').updateOne(
@@ -115,9 +72,6 @@ async function updateCat(req, res) {
 async function deleteCat(req, res) {
   try {
     const { id } = req.params;
-    if (!ObjectId.isValid(id)) {
-      return res.status(400).json({ error: 'Invalid cat id' });
-    }
     await initDb();
     const db = getDb();
     const result = await db.collection('cats').deleteOne({ _id: new ObjectId(id) });

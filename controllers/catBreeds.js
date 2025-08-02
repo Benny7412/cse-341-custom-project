@@ -1,36 +1,6 @@
 const { ObjectId } = require('mongodb');
 const { initDb, getDb } = require('../data/database');
 
-
-
-function validateBreed(body) {
-  if (!body || typeof body !== 'object') {
-    return 'Request body is missing or malformed';
-  }
-  const required = [
-    'breed',
-    'description',
-    'avgLifespan',
-    'avgLength',
-    'avgWeightMale',
-    'avgWeightFemale',
-    'imageURL',
-  ];
-  for (const key of required) {
-    if (!(key in body)) {
-      return `Missing required field: ${key}`;
-    }
-  }
-  if (typeof body.breed !== 'string' || !body.breed.trim()) return 'Breed must not be an empty string';
-  if (typeof body.description !== 'string' || !body.description.trim()) return 'Description must not be an empty string';
-  if (typeof body.avgLifespan !== 'string' && typeof body.avgLifespan !== 'number') return 'avgLifespan must be a string or number';
-  if (typeof body.avgLength !== 'string' && typeof body.avgLength !== 'number') return 'avgLength must be a string or number';
-  if (typeof body.avgWeightMale !== 'string' && typeof body.avgWeightMale !== 'number') return 'avgWeightMale must be a string or number';
-  if (typeof body.avgWeightFemale !== 'string' && typeof body.avgWeightFemale !== 'number') return 'avgWeightFemale must be a string or number';
-  if (typeof body.imageURL !== 'string' || !body.imageURL.trim()) return 'imageURL must not be an empty string';
-  return null;
-}
-
 // GET /breeds – list all breeds
 async function getAllBreeds(req, res) {
   try {
@@ -48,9 +18,6 @@ async function getAllBreeds(req, res) {
 async function getBreedById(req, res) {
   try {
     const { id } = req.params;
-    if (!ObjectId.isValid(id)) {
-      return res.status(400).json({ error: 'Invalid breed id' });
-    }
     await initDb();
     const db = getDb();
     const breed = await db.collection('catBreeds').findOne({ _id: new ObjectId(id) });
@@ -68,10 +35,6 @@ async function getBreedById(req, res) {
 async function createBreed(req, res) {
   try {
     const body = req.body;
-    const error = validateBreed(body);
-    if (error) {
-      return res.status(400).json({ error });
-    }
     await initDb();
     const db = getDb();
     const result = await db.collection('catBreeds').insertOne(body);
@@ -87,14 +50,7 @@ async function createBreed(req, res) {
 async function updateBreed(req, res) {
   try {
     const { id } = req.params;
-    if (!ObjectId.isValid(id)) {
-      return res.status(400).json({ error: 'Invalid breed id' });
-    }
     const body = req.body;
-    const error = validateBreed(body);
-    if (error) {
-      return res.status(400).json({ error });
-    }
     await initDb();
     const db = getDb();
     const result = await db.collection('catBreeds').updateOne({ _id: new ObjectId(id) }, { $set: body });
@@ -113,9 +69,6 @@ async function updateBreed(req, res) {
 async function deleteBreed(req, res) {
   try {
     const { id } = req.params;
-    if (!ObjectId.isValid(id)) {
-      return res.status(400).json({ error: 'Invalid breed id' });
-    }
     await initDb();
     const db = getDb();
     const result = await db.collection('catBreeds').deleteOne({ _id: new ObjectId(id) });
