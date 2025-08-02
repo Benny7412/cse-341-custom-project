@@ -1,61 +1,84 @@
 const { ObjectId } = require('mongodb');
 const { initDb, getDb } = require('../data/database');
 
-const currentDatabase = "CSE341-Project-2"; 
-const currentCollection = "cats";
+// Simple validation to ensure required fields are present and of the right type
+function validateCat(body) {
+  if (!body || typeof body !== 'object') {
+    return 'Request body is missing or malformed';
+  }
+  const required = [
+    'name',
+    'birthday',
+    'breed',
+    'gender',
+    'isVaccinated',
+    'weight',
+    'imageURL',
+  ];
+  for (const key of required) {
+    if (!(key in body)) {
+      return `Missing required field: ${key}`;
+    }
+  }
+  if (typeof body.name !== 'string' || !body.name.trim()) return 'Name must not be empty';
+  if (typeof body.breed !== 'string' || !body.breed.trim()) return 'Breed must not be empty';
+  if (typeof body.gender !== 'string' || !body.gender.trim()) return 'Gender must not be empty';
+  if (typeof body.isVaccinated !== 'boolean') return 'isVaccinated must be a boolean';
+  if (typeof body.weight !== 'string' && typeof body.weight !== 'number') return 'Weight must be a string or number';
+  if (typeof body.birthday !== 'string' || !body.birthday.trim()) return 'Birthday must not be empty';
+  if (typeof body.imageURL !== 'string' || !body.imageURL.trim()) return 'imageURL must not be empty';
+  return null;
+}
 
-const getAll = async (req, res) => {
-  //#swagger.tags=['Contacts']
-  const contacts = await mongodb
-    .getDatabase()
-    .db(currentDatabase)
-    .collection("contacts")
-    .find()
-    .toArray();
-  res.setHeader("Content-Type", "application/json");
-  res.status(200).json(contacts);
-};
+// GET /cats – list all cats
+async function getAllCats(req, res) {
+  try {
+    await initDb();
+    const db = getDb();
+    const cats = await db.collection('cats').find().toArray();
+    res.status(200).json(cats);
+  } catch (err) {
+    console.error('Error retrieving cats:', err);
+    res.status(500).json({ error: 'An error occurred fetching cats' });
+  }
+}
 
-const getSingle = async (req, res) => {
-  //#swagger.tags=['Contacts']
-  const userId = new ObjectId(req.params.id);
-  const contact = await mongodb
-    .getDatabase()
-    .db(currentDatabase)
-    .collection("contacts")
-    .find({ _id: userId });
+// GET /cats/:id – get a single cat by id
+async function getCatById(req, res) {
+  try {
+    const { id } = req.params;
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ error: 'Invalid cat id' });
+    }
+    await initDb();
+    const db = getDb();
+    const cat = await db.collection('cats').findOne({ _id: new ObjectId(id) });
+    if (!cat) {
+      return res.status(404).json({ error: 'Cat not found' });
+    }
+    res.status(200).json(cat);
+  } catch (err) {
+    console.error('Error retrieving cat:', err);
+    res.status(500).json({ error: 'An error occurred fetching the cat' });
+  }
+}
 
-  contact.toArray().then((users) => {
-    res.setHeader("Content-Type", "application/json");
-    res.status(200).json(users[0]);
-  });
-};
-
-const createContact = async (req, res) => {
-  //#swagger.tags=['Contacts']
-  //required fields: firstName, lastName, email, favoriteColor, birthday
-  const contact = {
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    email: req.body.email,
-    favoriteColor: req.body.favoriteColor,
-    birthday: req.body.birthday,
-  };
-
-  //acquire database and insert contact
-  const response = await mongodb
-    .getDatabase()
-    .db(currentDatabase)
-    .collection("contacts")
-    .insertOne(contact);
-  //if contact is created, send success message
-  if (response.acknowledged) {
-    res.status(201).json(response.insertedId);
-  } else {
-    //send error message
-    res
-      .status(500)
-      .json(response.error || "Error occurred while creating the contact");
+// POST /cats – create a new cat
+async function createCat(req, res) {
+  try {
+    const body = req.body;
+    const error = validateCat(body);
+    if (error) {
+      return res.status(400).json({ error });
+    }
+    await initDb();
+    const db = getDb();
+    const result = await db.collection('cats').insertOne(body);
+    const created = await db.collection('cats').findOne({ _id: result.insertedId });
+    res.status(201).json(created);
+  } catch (err) {
+    console.error('Error creating cat:', err);
+    res.status(500).json({ error: 'An error occurred creating the cat' });
   }
 }
 
@@ -73,9 +96,10 @@ async function updateCat(req, res) {
     }
     await initDb();
     const db = getDb();
-    const result = await db
-      .collection('cats')
-      .updateOne({ _id: new ObjectId(id) }, { $set: body });
+    const result = await db.collection('cats').updateOne(
+      { _id: new ObjectId(id) },
+      { $set: body }
+    );
     if (result.matchedCount === 0) {
       return res.status(404).json({ error: 'Cat not found' });
     }
