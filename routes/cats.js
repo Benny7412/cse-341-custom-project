@@ -3,12 +3,9 @@ const router = express.Router();
 const catsController = require('../controllers/cats');
 const { validateObjectId, validateCat } = require('../utilities');
 
-// #swagger.tags = ['Cats']
+
 // Return all cats
 router.get('/', (req, res) => {
-    /* #swagger.tags = ['Cats']
-       #swagger.description = 'Get all cats'
-    */
     return catsController.getAllCats(req, res);
 });
 
