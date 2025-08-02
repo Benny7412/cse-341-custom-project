@@ -8,34 +8,6 @@ const doc = {
   host: 'https://cse-341-custom-project.onrender.com',
   basePath: '/',
   schemes: ['https'],
-  tags: [
-    {
-      name: 'Cats',
-      description: 'Endpoints for managing individual cats'
-    },
-    {
-      name: 'Cat Breeds',
-      description: 'Endpoints for managing cat breeds'
-    }
-  ],
-  definitions: {
-    Cat: {
-      type: 'object',
-      properties: {
-        name: { type: 'string' },
-        age: { type: 'number' },
-        breed: { type: 'string' }
-      }
-    },
-    CatBreed: {
-      type: 'object',
-      properties: {
-        name: { type: 'string' },
-        description: { type: 'string' },
-        origin: { type: 'string' }
-      }
-    }
-  }
 };
 
 const outputFile = 'routes/docs/swagger.json';

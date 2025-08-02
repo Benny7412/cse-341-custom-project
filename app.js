@@ -22,12 +22,9 @@ app.use(express.static(path.join(__dirname, "public"))); // serve /public
 
 /* ---------- swagger docs ---------- */
 const swaggerUi = require('swagger-ui-express');
-const swaggerDocument = require('./docs/swagger.json');
-const swaggerOptions = {
-  explorer: true,
-  customCss: '.swagger-ui .topbar { display: none }',
-};
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, swaggerOptions));
+const swaggerDocument = require('routes/docs/swagger.json');
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 /* ---------- routes ---------- */
 app.use("/", indexRoutes);
