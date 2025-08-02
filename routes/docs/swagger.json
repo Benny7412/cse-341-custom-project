@@ -5,8 +5,11 @@
     "description": "API for managing cats and cat breeds information",
     "version": "1.0.0"
   },
-  "host": "localhost:8080",
+  "host": "https://cse-341-custom-project.onrender.com",
   "basePath": "/",
+    "schemes": [
+    "https"
+  ],
   "tags": [
     {
       "name": "Cats",
@@ -17,9 +20,7 @@
       "description": "Endpoints for managing cat breeds"
     }
   ],
-  "schemes": [
-    "http"
-  ],
+
   "paths": {
     "/": {
       "get": {
