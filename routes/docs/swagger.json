@@ -9,6 +9,76 @@
   "host": "cse-341-custom-project.onrender.com",
   "basePath": "/",
   "schemes": "https",
+  "definitions": {
+    "Cat": {
+      "type": "object",
+      "required": ["name", "birthday", "breed", "gender", "isVaccinated", "weight", "imageURL"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Cat's name"
+        },
+        "birthday": {
+          "type": "string",
+          "description": "Cat's birthday"
+        },
+        "breed": {
+          "type": "string",
+          "description": "Cat's breed"
+        },
+        "gender": {
+          "type": "string",
+          "description": "Cat's gender"
+        },
+        "isVaccinated": {
+          "type": "boolean",
+          "description": "Whether the cat is vaccinated"
+        },
+        "weight": {
+          "type": ["string", "number"],
+          "description": "Cat's weight"
+        },
+        "imageURL": {
+          "type": "string",
+          "description": "URL to cat's image"
+        }
+      }
+    },
+    "CatBreed": {
+      "type": "object",
+      "required": ["breed", "description", "avgLifespan", "avgLength", "avgWeightMale", "avgWeightFemale", "imageURL"],
+      "properties": {
+        "breed": {
+          "type": "string",
+          "description": "Breed name"
+        },
+        "description": {
+          "type": "string",
+          "description": "Breed description"
+        },
+        "avgLifespan": {
+          "type": ["string", "number"],
+          "description": "Average lifespan"
+        },
+        "avgLength": {
+          "type": ["string", "number"],
+          "description": "Average length"
+        },
+        "avgWeightMale": {
+          "type": ["string", "number"],
+          "description": "Average weight for males"
+        },
+        "avgWeightFemale": {
+          "type": ["string", "number"],
+          "description": "Average weight for females"
+        },
+        "imageURL": {
+          "type": "string",
+          "description": "URL to breed image"
+        }
+      }
+    }
+  },
   "paths": {
     "/": {
       "get": {
@@ -36,7 +106,18 @@
         }
       },
       "post": {
-        "description": "",
+        "tags": ["Cats"],
+        "description": "Create a new cat",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Cat"
+            }
+          }
+        ],
         "responses": {
           "201": {
             "description": "Created"
@@ -52,7 +133,8 @@
     },
     "/cats/{id}": {
       "get": {
-        "description": "",
+        "tags": ["Cats"],
+        "description": "Get a single cat by ID",
         "parameters": [
           {
             "name": "id",
@@ -77,13 +159,22 @@
         }
       },
       "put": {
-        "description": "",
+        "tags": ["Cats"],
+        "description": "Update an existing cat",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Cat"
+            }
           }
         ],
         "responses": {
@@ -102,7 +193,8 @@
         }
       },
       "delete": {
-        "description": "",
+        "tags": ["Cats"],
+        "description": "Delete a cat",
         "parameters": [
           {
             "name": "id",
@@ -129,7 +221,8 @@
     },
     "/catBreeds/": {
       "get": {
-        "description": "",
+        "tags": ["Cat Breeds"],
+        "description": "Get all cat breeds",
         "responses": {
           "200": {
             "description": "OK"
@@ -140,7 +233,18 @@
         }
       },
       "post": {
-        "description": "",
+        "tags": ["Cat Breeds"],
+        "description": "Create a new cat breed",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CatBreed"
+            }
+          }
+        ],
         "responses": {
           "201": {
             "description": "Created"
@@ -156,7 +260,8 @@
     },
     "/catBreeds/{id}": {
       "get": {
-        "description": "",
+        "tags": ["Cat Breeds"],
+        "description": "Get a single cat breed by ID",
         "parameters": [
           {
             "name": "id",
@@ -181,13 +286,22 @@
         }
       },
       "put": {
-        "description": "",
+        "tags": ["Cat Breeds"],
+        "description": "Update an existing cat breed",
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CatBreed"
+            }
           }
         ],
         "responses": {
@@ -206,7 +320,8 @@
         }
       },
       "delete": {
-        "description": "",
+        "tags": ["Cat Breeds"],
+        "description": "Delete a cat breed",
         "parameters": [
           {
             "name": "id",
