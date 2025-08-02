@@ -1,5 +1,5 @@
-const mongodb = require("../routes/data/database");
-const ObjectId = require("mongodb").ObjectId;
+const { ObjectId } = require('mongodb');
+const { initDb, getDb } = require('../data/database');
 
 const currentDatabase = "CSE341-Project-2"; 
 const currentCollection = "cats";
