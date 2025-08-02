@@ -5,9 +5,9 @@ const doc = {
     title: 'Cats API',
     description: 'API for managing cats and cat breeds information'
   },
-  host: 'localhost:8080',
+  host: 'https://cse-341-custom-project.onrender.com',
   basePath: '/',
-  schemes: ['http'],
+  schemes: ['https'],
   tags: [
     {
       name: 'Cats',
