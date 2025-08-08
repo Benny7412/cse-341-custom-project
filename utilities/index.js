@@ -107,6 +107,7 @@ const validateCatBreed = (req, res, next) => {
   next();
 };
 
+
 module.exports = {
   validateObjectId,
   validateCat,

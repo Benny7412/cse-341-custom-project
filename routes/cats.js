@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const catsController = require('../controllers/cats');
-const { validateObjectId, validateCat } = require('../utilities');
+const { validateObjectId, validateCat} = require('../utilities');
+const { isAuthenticated } = require('../utilities/authenticate');
 
 
 // Return all cats
@@ -15,12 +16,12 @@ router.get('/:id', validateObjectId, (req, res) => {
 });
 
 // Create new cat
-router.post('/', validateCat, catsController.createCat);
+router.post('/', isAuthenticated, validateCat, catsController.createCat);
 
 // Update existing cat
-router.put('/:id', validateObjectId, validateCat, catsController.updateCat);
+router.put('/:id', isAuthenticated, validateObjectId, validateCat, catsController.updateCat);
 
 // Delete cat
-router.delete('/:id', validateObjectId, catsController.deleteCat);
+router.delete('/:id', isAuthenticated, validateObjectId, catsController.deleteCat);
 
 module.exports = router;

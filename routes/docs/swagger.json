@@ -6,9 +6,9 @@
     "host": "localhost:8080",
     "version": "1.0.0"
   },
-  "host": "cse-341-custom-project.onrender.com",
+  "host": "localhost:8080",
   "basePath": "/",
-  "schemes": "https",
+  "schemes": "http",
   "definitions": {
     "Cat": {
       "type": "object",
