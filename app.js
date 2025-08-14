@@ -7,8 +7,6 @@ const mongodb = require("./data/database");
 
 // Import routes
 const indexRoutes = require("./routes/index");
-const catsRoutes = require("./routes/cats");
-const catBreedsRoutes = require("./routes/catBreeds");
 
 //authentication
 const passport = require("passport");
@@ -55,13 +53,10 @@ app
     next();
   })
   .use(cors({ methods: ["GET", "POST", "PUT", "PATCH", "OPTIONS", "DELETE"] }))
-  .use(cors({ origin: "*" }))
-  .use("/", require("./routes/index.js"));
+  .use(cors({ origin: "*" }));
 
 /* ---------- routes ---------- */
 app.use("/", indexRoutes);
-app.use("/cats", catsRoutes);
-app.use("/catBreeds", catBreedsRoutes);
 app.get("/api-docs/login", passport.authenticate("github"));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
@@ -99,10 +94,8 @@ app.get(
   "/github/callback",
   passport.authenticate("github", {
     failureRedirect: "/api-docs",
-    session: false,
   }),
   (req, res) => {
-    req.session.user = req.user;
     res.redirect("/");
   }
 );
