@@ -5,7 +5,16 @@ const passport = require("passport");
 router.use("/cats", require("./cats"));
 router.use("/catBreeds", require("./catBreeds"));
 
-router.get("/login", passport.authenticate("github"));
+router.get("/login", (req, res, next) => {
+  const dynamicCallback = `${req.protocol}://${req.get(
+    "host"
+  )}/github/callback`;
+  passport.authenticate("github", { callbackURL: dynamicCallback })(
+    req,
+    res,
+    next
+  );
+});
 
 router.get("/logout", (req, res, next) => {
   req.logout(function (err) {
