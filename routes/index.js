@@ -6,9 +6,7 @@ router.use("/cats", require("./cats"));
 router.use("/catBreeds", require("./catBreeds"));
 
 router.get("/login", (req, res, next) => {
-  const dynamicCallback = `${req.protocol}://${req.get(
-    "host"
-  )}/github/callback`;
+  const dynamicCallback = `https://${req.get("host")}/github/callback`;
   passport.authenticate("github", { callbackURL: dynamicCallback })(
     req,
     res,
