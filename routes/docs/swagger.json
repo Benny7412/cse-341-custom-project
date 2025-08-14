@@ -3,12 +3,12 @@
   "info": {
     "title": "Cats API",
     "description": "API for managing cats and cat breeds information",
-    "host": "localhost:8080",
+    "host": "cse-341-custom-project.onrender.com",
     "version": "1.0.0"
   },
-  "host": "localhost:8080",
+  "host": "cse-341-custom-project.onrender.com",
   "basePath": "/",
-  "schemes": "http",
+  "schemes": "https",
   "definitions": {
     "Cat": {
       "type": "object",
