@@ -35,7 +35,7 @@
           "description": "Whether the cat is vaccinated"
         },
         "weight": {
-          "type": ["string", "number"],
+          "type": "string",
           "description": "Cat's weight"
         },
         "imageURL": {
